@@ -1,0 +1,2677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRSupreme - Roblox Script</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding-top: 80px; /* 为固定导航栏留出空间 */
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ================== 顶部导航栏 ================== */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        /* 左侧：Logo和网站标题 */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            color: #4cc9f0;
+            font-size: 1.8rem;
+        }
+        
+        /* 圆形Logo样式 */
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4cc9f0;
+            box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 默认Logo文字（当没有图片时显示） */
+        .logo-text {
+            color: #4cc9f0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .site-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .site-title span {
+            color: #4cc9f0;
+        }
+        
+        /* 中间：主要导航菜单 */
+        .main-nav {
+            display: flex;
+            gap: 5px;
+            background: rgba(30, 30, 46, 0.8);
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-btn {
+            background: transparent;
+            color: #a9a9a9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        /* 右侧：语言切换和额外功能 */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* 汉堡菜单按钮（移动端） */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        /* 移动端下拉菜单 */
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .mobile-nav.active {
+            display: flex;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header-right {
+                margin-left: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 1.2rem;
+            }
+            
+            .logo-image {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .logo-text {
+                font-size: 1rem;
+            }
+            
+            body {
+                padding-top: 70px;
+            }
+        }
+        
+        /* 语言切换器优化 */
+        .lang-btn {
+            background: rgba(67, 97, 238, 0.2);
+            color: white;
+            border: 1px solid rgba(67, 97, 238, 0.4);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            min-width: 80px;
+            justify-content: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(67, 97, 238, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* ================== 页面内容样式 ================== */
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            color: #4cc9f0;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        }
+        
+        .tagline {
+            color: #a9a9a9;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-title {
+            color: #72efdd;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: #4cc9f0;
+        }
+        
+        .description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .features {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        
+        .features li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #3a56d4, #2a0777);
+            transform: scale(1.02);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(90deg, #f72585, #b5179e);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #e01e75, #9c1588);
+            transform: scale(1.02);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(90deg, #3ab5d9, #3a56d4);
+            transform: scale(1.02);
+        }
+        
+        .btn-kook {
+            background: linear-gradient(90deg, #FF5C00, #FF8C00);
+            color: white;
+        }
+        
+        .btn-kook:hover {
+            background: linear-gradient(90deg, #E55300, #E57E00);
+            transform: scale(1.02);
+        }
+        
+        .btn-discord {
+            background: linear-gradient(90deg, #5865F2, #404EED);
+            color: white;
+        }
+        
+        .btn-discord:hover {
+            background: linear-gradient(90deg, #4752C4, #363EBD);
+            transform: scale(1.02);
+        }
+        
+        .btn-telegram {
+            background: linear-gradient(90deg, #26A5E4, #0088CC);
+            color: white;
+        }
+        
+        .btn-telegram:hover {
+            background: linear-gradient(90deg, #1E94D1, #0077B3);
+            transform: scale(1.02);
+        }
+        
+        .btn-open-source {
+            background: linear-gradient(90deg, #38b000, #2d9600);
+            color: white;
+        }
+        
+        .btn-open-source:hover {
+            background: linear-gradient(90deg, #2e8e00, #247100);
+            transform: scale(1.02);
+        }
+        
+        .btn-cracked {
+            background: linear-gradient(90deg, #ff5400, #ff6d00);
+            color: white;
+        }
+        
+        .btn-cracked:hover {
+            background: linear-gradient(90deg, #e04a00, #e06200);
+            transform: scale(1.02);
+        }
+        
+        .btn-github {
+            background: linear-gradient(90deg, #333, #24292e);
+            color: white;
+        }
+        
+        .btn-github:hover {
+            background: linear-gradient(90deg, #444, #343a40);
+            transform: scale(1.02);
+        }
+        
+        .script-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #4361ee;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .script-box pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            color: #72efdd;
+            font-size: 0.95rem;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(76, 201, 240, 0.2);
+            color: #4cc9f0;
+            border: 1px solid #4cc9f0;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(76, 201, 240, 0.4);
+        }
+        
+        .copied-notice {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.3s forwards;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a9a9a9;
+            font-size: 0.9rem;
+        }
+        
+        .warning {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        /* 官方频道样式 */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .channel-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .channel-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+        
+        .channel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #72efdd;
+        }
+        
+        .channel-desc {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        /* 开发人员样式 */
+        .dev-team {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .dev-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .dev-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+        
+        .dev-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #72efdd;
+        }
+        
+        .dev-role {
+            color: #a9a9a9;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .dev-contact {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .contact-link {
+            color: #4cc9f0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 更新日志样式 */
+        .changelog {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .changelog-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4cc9f0;
+        }
+        
+        .changelog-date {
+            color: #72efdd;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .changelog-content {
+            line-height: 1.5;
+        }
+        
+        .changelog-content ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+        
+        .changelog-content li {
+            margin-bottom: 5px;
+        }
+        
+        /* 服务展示样式 */
+        .service-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .service-title {
+            color: #72efdd;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .service-price {
+            background: linear-gradient(90deg, #f72585, #b5179e);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .service-features {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        /* 项目说明样式 */
+        .project-features {
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid;
+        }
+        
+        .feature-free {
+            border-left-color: #4caf50;
+        }
+        
+        .feature-paid {
+            border-left-color: #ff9800;
+        }
+        
+        .feature-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .feature-free .feature-title {
+            color: #4caf50;
+        }
+        
+        .feature-paid .feature-title {
+            color: #ff9800;
+        }
+        
+        /* 页面切换动画 */
+        .page {
+            display: none;
+            animation: pageFadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 滚动条样式 */
+        .changelog::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .changelog::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .changelog::-webkit-scrollbar-thumb {
+            background: rgba(76, 201, 240, 0.5);
+            border-radius: 3px;
+        }
+        
+        .changelog::-webkit-scrollbar-thumb:hover {
+            background: rgba(76, 201, 240, 0.8);
+        }
+        
+        /* 响应式设计补充 */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .channels-grid,
+            .dev-team {
+                grid-template-columns: 1fr;
+            }
+            
+            .mobile-nav .nav-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 20px;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #4cc9f0;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 导航按钮文本样式 */
+        .nav-btn span {
+            display: inline-block;
+        }
+        
+        /* ================== 新增：破解/开源页面样式 ================== */
+        .repo-buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .repo-section {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .repo-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .repo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .repo-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #72efdd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .repo-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-cracked {
+            background: linear-gradient(90deg, #ff5400, #ff6d00);
+            color: white;
+        }
+        
+        .badge-open-source {
+            background: linear-gradient(90deg, #38b000, #2d9600);
+            color: white;
+        }
+        
+        .repo-content {
+            margin: 20px 0;
+        }
+        
+        .repo-update-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4cc9f0;
+        }
+        
+        .update-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .update-date {
+            color: #4cc9f0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .update-version {
+            background: rgba(76, 201, 240, 0.2);
+            color: #4cc9f0;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .update-content ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .update-content li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .repo-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-count {
+            color: #4cc9f0;
+            font-weight: 600;
+        }
+        
+        .repo-description {
+            line-height: 1.6;
+            margin: 15px 0;
+            font-size: 1.05rem;
+        }
+        
+        @media (max-width: 768px) {
+            .repo-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .repo-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ================== 顶部导航栏 ================== -->
+    <div class="top-header">
+        <div class="header-content">
+            <!-- 左侧：Logo和网站标题 -->
+            <div class="logo-section">
+                <!-- 圆形Logo容器 -->
+                <div class="logo-image" id="logoImage">
+                    <!-- Logo图片将在这里动态加载 -->
+                    <!-- 如果没有图片，会显示默认文字 -->
+                    <div class="logo-text">MR-S</div>
+                </div>
+                <div class="site-title">
+                    <span id="logoPrefix">MR</span>-<span id="logoSuffix">SUPREME</span>
+                </div>
+            </div>
+            
+            <!-- 中间：主要导航菜单（桌面端） -->
+            <nav class="main-nav">
+                <button class="nav-btn active" onclick="showPage('home')">
+                    <i class="fas fa-home"></i> <span class="nav-text" data-key="navHome">首页</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('servers')">
+                    <i class="fas fa-server"></i> <span class="nav-text" data-key="navSupport">支持</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('scripts')">
+                    <i class="fas fa-code"></i> <span class="nav-text" data-key="navScripts">脚本介绍</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('cracked')">
+                    <i class="fas fa-unlock"></i> <span class="nav-text" data-key="navCracked">破解/开源</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('services')">
+                    <i class="fas fa-shopping-cart"></i> <span class="nav-text" data-key="navServices">其他服务</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('community')">
+                    <i class="fas fa-users"></i> <span class="nav-text" data-key="navCommunity">社区</span>
+                </button>
+                <button class="nav-btn" onclick="showPage('about')">
+                    <i class="fas fa-info-circle"></i> <span class="nav-text" data-key="navAbout">关于</span>
+                </button>
+            </nav>
+            
+            <!-- 右侧：语言切换和移动端菜单按钮 -->
+            <div class="header-right">
+                <!-- 语言切换器 -->
+                <button class="lang-btn" id="languageBtn">
+                    <span id="currentLang">🇨🇳 CN</span>
+                </button>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单（下拉） -->
+        <div class="mobile-nav" id="mobileNav">
+            <button class="nav-btn active" onclick="showPage('home'); toggleMobileMenu()">
+                <i class="fas fa-home"></i> <span class="nav-text" data-key="navHome">首页</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('servers'); toggleMobileMenu()">
+                <i class="fas fa-server"></i> <span class="nav-text" data-key="navSupport">支持</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('scripts'); toggleMobileMenu()">
+                <i class="fas fa-code"></i> <span class="nav-text" data-key="navScripts">脚本介绍</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('cracked'); toggleMobileMenu()">
+                <i class="fas fa-unlock"></i> <span class="nav-text" data-key="navCracked">破解/开源</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('services'); toggleMobileMenu()">
+                <i class="fas fa-shopping-cart"></i> <span class="nav-text" data-key="navServices">其他服务</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('community'); toggleMobileMenu()">
+                <i class="fas fa-users"></i> <span class="nav-text" data-key="navCommunity">社区</span>
+            </button>
+            <button class="nav-btn" onclick="showPage('about'); toggleMobileMenu()">
+                <i class="fas fa-info-circle"></i> <span class="nav-text" data-key="navAbout">关于</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================== 页面容器 ================== -->
+    <div class="container">
+        <!-- 首页 -->
+        <div id="home" class="page active">
+            <header>
+                <h1 id="title"><i class="fas fa-crown"></i> MR-Supreme</h1>
+                <p class="tagline" id="tagline"> MRSupreme是Roblox脚本 - 增强您的游戏体验</p>
+                <p id="subtitle">MRSupreme脚本官网：解决方案，包含脚本、服务、社区和支持</p>
+            </header>
+            
+            <div class="content-grid">
+                <!-- 脚本获取 -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-download"></i> <span id="getScriptTitle">获取脚本</span></h2>
+                    <p class="description" id="getScriptText">
+                        要使用 MRSupreme 脚本，您需要先下载脚本执行器。以下是获取和使用脚本的步骤：
+                    </p>
+                    
+                    <ol class="features" id="getScriptSteps">
+                        <li>下载并安装支持的脚本执行器（推荐Delta,其他未测试过）</li>
+                        <li>复制下方链接并打开查看￼￼</li>
+                        <li>在游戏中打开执行器并粘贴脚本</li>
+                        <li>执行脚本并享受增强的游戏体验</li>
+                    </ol>
+                    
+                    <div class="script-box">
+                        <button class="copy-btn" id="copyScriptBtn">
+                            <i class="fas fa-copy"></i> <span id="copyScriptText">查看链接￼</span>
+                        </button>
+                        <pre id="scriptContent">￼https://pastebin.com/raw/KLE9uDDM</pre>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="https://deltaexploits.gg/delta-executor" target="_blank" class="btn btn-secondary" id="executorBtn">
+                            <i class="fas fa-external-link-alt"></i> <span id="executorText">获取 Delta（推荐）</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 密钥获取 -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-key"></i> <span id="getKeyTitle">获取密钥</span></h2>
+                    <p class="description" id="getKeyText">
+                        MRSupreme脚本需要密钥才能运行。以下是获取密钥的方法：
+                    </p>
+                    
+                    <ul class="features" id="getKeyMethods">
+                        <li>关注脚本更新公告获取密钥信息</li>
+                        <li>通过官方社区获取密钥支持</li>
+                        <li>留意下方脚本密钥</li>
+                    </ul>
+                    
+                    <div class="script-box">
+                        <button class="copy-btn" id="copyKeyBtn">
+                            <i class="fas fa-copy"></i> <span id="copyKeyText">复制密钥</span>
+                        </button>
+                        <pre id="keyContent">no</pre>
+                    </div>
+                </div>
+                
+                <!-- 官方频道 -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-broadcast-tower"></i> <span id="channelsTitle">官方频道</span></h2>
+                    <p class="description" id="channelsText">
+                        加入我们的官方社区，获取最新脚本更新、教程和即时支持：
+                    </p>
+                    
+                    <div class="channels-grid">
+                        <div class="channel-card">
+                            <div class="channel-title">
+                                <i class="fab fa-discord"></i>
+                                <h3>Discord 社区</h3>
+                            </div>
+                            <p class="channel-desc" id="discordDesc">未使用</p>
+                            <a href="https://discord.gg/example" target="_blank" class="btn btn-discord">
+                                <i class="fab fa-discord"></i> <span id="joinDiscordText">加入 Discord</span>
+                            </a>
+                        </div>
+                        
+                        <div class="channel-card">
+                            <div class="channel-title">
+                                <i class="fas fa-users"></i>
+                                <h3>KOOK 社区</h3>
+                            </div>
+                            <p class="channel-desc" id="kookDesc">加入KOOK官方社区，获取密钥支持、脚本更新和即时帮助。</p>
+                            <a href="https://kook.vip/09FvCg" target="_blank" class="btn btn-kook">
+                                <i class="fas fa-users"></i> <span id="joinKookText">加入 KOOK</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-grid" style="margin-top: 30px;">
+                <!-- 日志 -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-history"></i> <span id="changelogTitle">日志</span></h2>
+                    <p class="description" id="changelogText">
+                        查看 MRSupreme 的最新日志历史：
+                    </p>
+                    <div class="changelog">
+                    <div class="changelog-item">
+                    <div class="changelog-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="updateDate1">2025年12月29日 - v0.0.5</span>
+            </div>
+            <div class="changelog-content" id="updateContent1">
+                <strong>￼恢复通知：</strong>
+                <ul>
+                    <li>脚本恢复￼</li>
+                    <li>已进行全面整改￼</li>
+                </ul>
+            </div>
+        </div>
+            <div class="changelog-item">
+            <div class="changelog-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="updateDate2">2025年12月17日 - v0.0.4</span>
+            </div>
+            <div class="changelog-content" id="updateContent2">
+                <strong>[+]：</strong>
+                <ul>
+                    <li>官网新增加 破解/开源 页面￼</li>
+                    <li>自行查看￼</li>
+                </ul>
+            </div>
+        </div>
+                    <div class="changelog-item">
+            <div class="changelog-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="updateDate3">2025年12月12日 - v0.0.3</span>
+            </div>
+            <div class="changelog-content" id="updateContent3">
+                <strong>重要通知：</strong>
+                <ul>
+                    <li>脚本已关闭</li>
+                    <li>进行全面整改</li>
+                    <li>回归时间待定</li>
+                    <li>感谢理解，非常抱歉!</li>
+                </ul>
+            </div>
+        </div>
+                    <div class="changelog-item">
+            <div class="changelog-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="updateDate4">2025年12月10日 - v0.0.2</span>
+            </div>
+            <div class="changelog-content" id="updateContent4">
+                <strong>维护通知：</strong>
+                <ul>
+                    <li>脚本已进行定期维护</li>
+                    <li>优化脚本执行效率，提升30%性能</li>
+                    <li>修复已知bug</li>
+                    <li>增强脚本稳定性</li>
+                </ul>
+            </div>
+        </div>
+                        <div class="changelog-item">
+                            <div class="changelog-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span id="updateDate5">2025年12月8日 - v0.0.1</span>
+                            </div>
+                            <div class="changelog-content" id="updateContent5">
+                                <strong>主要通知：</strong>
+                                <ul>
+                                    <li>上线最新版官网</li>
+                                    <li>非常不错</li>
+                                    <li>基础功能</li>
+                                    <li>简单易用的界面</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="description" id="changelogUpdateText" style="margin-top: 15px; font-size: 0.9rem; color: #a9a9a9;">
+                        更多历史版本信息请访问我们的社区查看完整日志!
+                    </p>
+                </div>
+                
+                <!-- 开发人员展示 -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-users"></i> <span id="devTeamTitle">开发团队</span></h2>
+                    <p class="description" id="devTeamText">
+                        认识MRSupreme背后的开发团队：
+                    </p>
+                    
+                    <div class="dev-team">
+                        <div class="dev-card">
+                            <div class="dev-name" id="dev1Name">MR</div>
+                            <div class="dev-role" id="dev1Role">MR-S团队负责人/脚本主作者</div>
+                            <p class="description" id="dev1Desc">负责脚本核心功能开发与维护</p>
+                            <div class="dev-contact">
+                                <strong id="contactTitle1">联系方式：</strong>
+                                <a href="Email ：gfhasd99@outlook.com" target="_blank" class="contact-link">
+                                    <i class="fab fa-telegram"></i>Email ：gfhasd99@outlook.com
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="dev-card">
+                            <div class="dev-name" id="dev2Name">HHH</div>
+                            <div class="dev-role" id="dev2Role">MR-S团队核心成员/脚本副作者</div>
+                            <p class="description" id="dev2Desc">负责脚本优化，脚本次要功能开发,提供最佳用户体验。</p>
+                            <div class="dev-contact">
+                                <strong id="contactTitle2">联系方式：</strong>
+                                <a href="no" target="_blank" class="contact-link">
+                                    <i class="fab fa-telegram"></i> NO
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 支持页面 -->
+        <div id="servers" class="page">
+            <div class="card">
+                <h1><i class="fas fa-server"></i> <span id="supportTitle">售后服务</span></h1>
+                <p class="description" id="supportDesc">售后服务须知</p>
+                
+                <div class="content-grid" style="margin-top: 20px;">
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="importantNotesTitle">重要须知</span>
+                        </div>
+                        <ul class="features" id="importantNotesList">
+                            <li>账号类型:只保证账号可登,登上后售后无效</li>
+                            <li>脚本类型:暂时没有</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-star"></i>
+                            <span id="supportInfoTitle">支持</span>
+                        </div>
+                        <ul class="features" id="supportInfoList">
+                            <li>官方邮箱: mrsupreme01@outlook.com </li>
+                            <li>有任何问题请发邮件反馈</li>
+                            <li>合作相关事宜亦可使用上述邮箱发送相关文件￼￼￼</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="info" style="margin-top: 20px;">
+                    <h3><i class="fas fa-info-circle"></i> <span id="supportNoticeTitle">重要说明❗️</span></h3>
+                    <p id="supportNoticeText">有问题可以反馈,没问题瞎发邮件，将会导致被永久拉黑！</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 脚本介绍页面 -->
+        <div id="scripts" class="page">
+            <div class="card">
+                <h1><i class="fas fa-code"></i> <span id="scriptsTitle">脚本介绍</span></h1>
+                <p class="description" id="scriptsDesc">MRSupreme 脚本介绍</p>
+                
+                <div class="content-grid" style="margin-top: 20px;">
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-cogs"></i>
+                            <span id="coreFeaturesTitle">主要</span>
+                        </div>
+                        <ul class="features" id="coreFeaturesList">
+                            <li><strong>MR-S团队与多位</strong> - 团队/个人 合作/授权,提供高质量脚本</li>
+                            <li><strong>MR-S团队保障</strong> - 脚本不会受到roblox检测</li>
+                            <li><strong>安全保护</strong> - 防反作弊检测机制和隐私保护</li>
+                            <li><strong>性能优化</strong> - 减少资源占用，提升运行效率</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-book"></i>
+                            <span id="tutorialTitle">脚本使用教程</span>
+                        </div>
+                        <ol class="features" id="tutorialSteps">
+                            <li>下载并安装脚本执行器（推荐Delta）</li>
+                            <li>复制MRSupreme脚本代码</li>
+                            <li>在游戏中打开执行器界面</li>
+                            <li>粘贴脚本代码并执行</li>
+                            <li>根据提示输入密钥</li>
+                            <li>在游戏内打开MRSupreme菜单</li>
+                            <li>启动您需要的脚本/功能</li>
+                            <li>开始享受增强的游戏体验</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="warning" style="margin-top: 20px;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> <span id="warningTitle">重要提示❗️</span></h3>
+                    <p id="warningText">某些服务器有反作弊,使用脚本/功能 后可能会触发反作弊，后果请自行承担!</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 破解/开源页面 -->
+        <div id="cracked" class="page">
+            <div class="card">
+                <h1><i class="fas fa-unlock"></i> <span id="crackedTitle">破解/开源 ￼项目仓库</span></h1>
+                <p class="description" id="crackedDesc">这里存放 MR-S团队或其他合作人/团队的￼ 破解￼项目和开源项目!</p>
+                
+                <div class="info">
+                    <h3><i class="fas fa-info-circle"></i> <span id="crackedNoticeTitle">注意：</span></h3>
+                    <p id="crackedNoticeText">
+                        <strong>破解项目￼</strong>：仅提供脚本链接，仅供学习交流使用<br>
+                        <strong>开源项目</strong>：提供完整源代码，支持查看和下载<br>
+                        ❗️请遵守相关法律法规，合理使用这些资源
+                    </p>
+                </div>
+                
+                <!-- 新的仓库按钮布局 -->
+                <div class="repo-buttons-container">
+                    <!-- 破解脚本仓库 -->
+                    <div class="repo-section">
+                        <div class="repo-header">
+                            <div class="repo-title">
+                                <i class="fas fa-unlock-alt"></i>
+                                <span id="crackedRepoTitle">破解项目￼仓库</span>
+                            </div>
+                            <div class="repo-badge badge-cracked" id="crackedBadge">
+                                破解/Cracked
+                            </div>
+                        </div>
+                        
+                        <p class="repo-description" id="crackedRepoDesc">
+                            包含 MR-S￼团队或其他合作人/团队 破解的各种付费/免费脚本，持续更新中......
+                        </p>
+                        
+                        <div class="repo-update-info">
+                            <div class="update-header">
+                                <div class="update-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span id="crackedUpdateDate">最新更新: 2025-12-31</span>
+                                </div>
+                                <div class="update-version" id="crackedUpdateVersion">v2.0</div>
+                            </div>
+                            <div class="update-content" id="crackedUpdateContent">
+                                <strong>更新内容:</strong>
+                                <ul>
+                                    <li>清水GBv6.1￼￼￼</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="repo-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-code"></i>
+                                <span>项目￼数量/Number of projects: <span class="stat-count" id="crackedScriptCount">∞</span></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-gamepad"></i>
+                                <span>支持游戏/Supported games￼: <span class="stat-count" id="crackedGameCount">∞</span></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clock"></i>
+                                <span>最后更新/Last updated: <span class="stat-count" id="crackedLastUpdate">25-12-31-20:50</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons" style="margin-top: 25px;">
+                            <a href="https://github.com/yourusername/cracked-scripts-repo" target="_blank" class="btn btn-cracked" style="padding: 15px 30px; font-size: 1.1rem;">
+                                <i class="fas fa-external-link-alt"></i> <span id="viewCrackedRepoText">查看破解项目￼仓库</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 开源项目仓库 -->
+                    <div class="repo-section">
+                        <div class="repo-header">
+                            <div class="repo-title">
+                                <i class="fas fa-code-branch"></i>
+                                <span id="openSourceRepoTitle">开源项目仓库</span>
+                            </div>
+                            <div class="repo-badge badge-open-source" id="openSourceBadge">
+                                开源/Open source
+                            </div>
+                        </div>
+                        
+                        <p class="repo-description" id="openSourceRepoDesc">
+                            包含 MR-S团队或其他合作人/团队 各种破解￼开源项目，完整源代码可供学习和使用！
+                        </p>
+                        
+                        <div class="repo-update-info">
+                            <div class="update-header">
+                                <div class="update-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span id="openSourceUpdateDate">最新更新: 2025-12-30</span>
+                                </div>
+                                <div class="update-version" id="openSourceUpdateVersion">v3.0</div>
+                            </div>
+                            <div class="update-content" id="openSourceUpdateContent">
+                                <strong>更新内容:</strong>
+                                <ul>
+                                    <li>MR-S 99夜 残缺源</li>
+                                    <li>MR-S 自动汉化 源</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="repo-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>项目数量/Number of projects: <span class="stat-count" id="openSourceProjectCount">∞</span></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-star"></i>
+                                <span>GitHub Stars: <span class="stat-count" id="openSourceStars">∞</span></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-code-commit"></i>
+                                <span> 最后更新/Last updated: <span class="stat-count" id="openSourceLastCommit">25-12-30-19:30</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons" style="margin-top: 25px;">
+                            <a href="https://github.com/yourusername/open-source-projects" target="_blank" class="btn btn-open-source" style="padding: 15px 30px; font-size: 1.1rem;">
+                                <i class="fab fa-github"></i> <span id="viewOpenSourceRepoText">查看开源项目仓库</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title">
+                        <i class="fas fa-question-circle"></i>
+                        <span id="crackedFAQTitle">常见问题</span>
+                    </div>
+                    <ul class="features" id="crackedFAQList">
+                        <li><strong>破解脚本和开源有什么区别？</strong><br>破解脚本是 MR-S团队或其他合作人/￼团队 ￼￼破解了其他作者的付费/￼免费脚本，仅提供使用链接；开源是 MR-S团队或其他合作人/团队 破解的其他脚本￼，提供完整源代码。</li>
+                        <li><strong>这些脚本安全吗？</strong><br>所有脚本都经过测试，但不保证100%安全，使用前请自行评估风险。</li>
+                        <li><strong>我可以使用这些脚本吗？</strong><br>可以，但请仅用于学习目的，并遵守游戏规则。</li>
+                        <li><strong>为何有问题￼？</strong><br>我们仅做破解/开源工作，￼脚本有任何问题自行解决！￼￼￼￼</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 其他服务页面 -->
+        <div id="services" class="page">
+            <div class="card">
+                <h1><i class="fas fa-shopping-cart"></i> <span id="servicesTitle">其他服务</span></h1>
+                <p class="description" id="servicesDesc">除了脚本外，我们还提供以下Roblox相关服务：</p>
+                
+                <div class="service-item">
+                    <div class="service-header">
+                        <div class="service-title" id="robloxAccountsTitle">Roblox 白号</div>
+                        <div class="service-price">¥/$ 1-20</div>
+                    </div>
+                    <p class="description" id="robloxAccountsDesc">
+                        提供高质量的Roblox白号，保证安全、稳定、无封禁记录。适合需要多个账号的用户。
+                    </p>
+                    <ul class="service-features" id="robloxAccountsFeatures">
+                        <li>全新的Roblox账号</li>
+                        <li>随机，30天，70天，100天，180天，1年....（未上架：08年，10年）</li>
+                        <li>随机用户名和密码</li>
+                        <li>放心购买，无任何绑定</li>
+                        <li>购前须知:所有账号无任何绑定,给你前我们都会检查一遍账号，因此账号类型无售后，最多保证账号在无法登录情况下更换，成功登录上售后无效！</li>
+                    </ul>
+                    <div class="action-buttons">
+                        <a href="https://pastefy.app/HeJ1XimL/raw" target="_blank" class="btn btn-telegram">
+                            <i class="fab fa-telegram"></i> <span id="contactPurchaseText">联系购买</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="info">
+                    <p id="servicesNotice">所有服务均通过官方渠道进行，保证交易安全。如有疑问，请通过官方社区联系我们。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 社区页面 -->
+        <div id="community" class="page">
+            <div class="card">
+                <h1><i class="fas fa-users"></i> <span id="communityTitle">社区</span></h1>
+                <p class="description" id="communityDesc">加入我们的社区，与其他玩家交流，获取最新信息和支持</p>
+                
+                <div class="channels-grid" style="margin-top: 20px;">
+                    <div class="channel-card">
+                        <div class="channel-title">
+                            <i class="fab fa-discord"></i>
+                            <h3>Discord 社区</h3>
+                        </div>
+                        <p class="channel-desc" id="communityDiscordDesc">未使用</p>
+                        <a href="https://discord.gg/example" target="_blank" class="btn btn-discord">
+                            <i class="fab fa-discord"></i> <span id="joinCommunityDiscordText">加入 Discord</span>
+                        </a>
+                    </div>
+                    
+                    <div class="channel-card">
+                        <div class="channel-title">
+                            <i class="fas fa-users"></i>
+                            <h3>KOOK 社区</h3>
+                        </div>
+                        <p class="channel-desc" id="communityKookDesc">加入KOOK官方社区，获取密钥支持、脚本更新和即时帮助。</p>
+                        <a href="https://kook.vip/09FvCg" target="_blank" class="btn btn-kook">
+                            <i class="fas fa-users"></i> <span id="joinCommunityKookText">加入 KOOK</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title">
+                        <i class="fas fa-comments"></i>
+                        <span id="communityRulesTitle">社区规则</span>
+                    </div>
+                    <ul class="features" id="communityRulesList">
+                        <li>尊重其他社区成员，文明交流</li>
+                        <li>禁止发布广告、垃圾信息</li>
+                        <li>禁止讨论破解、盗版相关内容</li>
+                        <li>问题反馈请提供详细信息和截图</li>
+                        <li>遵守Roblox游戏的服务条款</li>
+                        <li>管理员有权利处理违规行为</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 关于页面 -->
+        <div id="about" class="page">
+            <div class="card">
+                <h1><i class="fas fa-info-circle"></i> <span id="aboutTitle">关于 MRSupreme</span></h1>
+                <p class="description" id="aboutDesc">了解MRSupreme项目的功能支持和开发计划：</p>
+                
+                <div class="project-features">
+                    <div class="feature-item feature-free">
+                        <div class="feature-title">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="freeVersionTitle">免费版支持</span>
+                        </div>
+                        <ul class="features" id="freeVersionFeatures">
+                            <li>基础脚本功能</li>
+                            <li>简单UI界面和设置</li>
+                            <li>热门/冷门 Roblox游戏支持</li>
+                            <li>社区技术支持和帮助</li>
+                            <li>定期安全更新和维护</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-item feature-paid">
+                        <div class="feature-title">
+                            <i class="fas fa-crown"></i>
+                            <span id="paidVersionTitle">付费版支持</span>
+                        </div>
+                        <ul class="features" id="paidVersionFeatures">
+                            <li>高级脚本功能</li>
+                            <li>定制化游戏支持</li>
+                            <li>优先技术支持和更新</li>
+                            <li>专属社区身份和权限</li>
+                            <li>24/7 技术/售后支持</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="warning">
+                    <p><strong id="paidStatusTitle">付费版状态：</strong><span id="paidStatusText">目前暂无付费版本制作计划，所有功能均为免费提供。如未来推出付费版，将在官方社区提前通知。</span></p>
+                </div>
+                
+                <p class="description" id="aboutGoalText">
+                    MR-S团队:提供高质量、安全、稳定的免费脚本服务，帮助Roblox玩家获得更好的游戏体验。
+                </p>
+                
+                <div class="info" style="margin-top: 20px;">
+                    <h3><i class="fas fa-shield-alt"></i> <span id="securityTitle">安全声明❗️</span></h3>
+                    <p id="securityText">MRSupreme脚本仅用于学习和研究目的。我们不对使用脚本可能导致的任何后果负责。请遵守游戏规则，合理使用脚本。</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p id="footerText1">© 2026 MRSupreme</p>
+            <p id="footerText2"></p>
+        </footer>
+        
+        <!-- 复制成功提示 -->
+        <div id="copiedNotice" class="copied-notice" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span id="copiedText">已成功复制到剪贴板！</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================
+        // Logo配置
+        // ============================
+        
+        // 配置您的Logo图片URL
+        const LOGO_CONFIG = {
+            // 在这里设置您的Logo图片URL（圆形图片效果最佳）
+            imageUrl: 'https://raw.githubusercontent.com/doghwrf001/111/refs/heads/main/1000002.PNG', // 示例: 'https://example.com/logo.png' 或 'images/logo.png'
+            
+            // 如果图片加载失败或没有设置图片，显示的默认文字
+            defaultText: 'MR-S',
+            
+            // 网站标题前缀（蓝色部分）
+            prefix: 'MR',
+            
+            // 网站标题后缀
+            suffix: 'Supreme'
+        };
+        
+        // 加载Logo图片
+        function loadLogo() {
+            const logoContainer = document.getElementById('logoImage');
+            
+            if (LOGO_CONFIG.imageUrl && LOGO_CONFIG.imageUrl.trim() !== '') {
+                // 创建图片元素
+                const img = new Image();
+                img.src = LOGO_CONFIG.imageUrl;
+                img.alt = 'MRSupreme Logo';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                // 图片加载成功
+                img.onload = function() {
+                    // 清空容器
+                    logoContainer.innerHTML = '';
+                    // 添加图片
+                    logoContainer.appendChild(img);
+                };
+                
+                // 图片加载失败
+                img.onerror = function() {
+                    showDefaultLogo();
+                };
+                
+                // 设置超时（3秒后如果还没加载完成，显示默认Logo）
+                setTimeout(() => {
+                    if (!img.complete) {
+                        showDefaultLogo();
+                    }
+                }, 3000);
+            } else {
+                // 没有设置图片URL，显示默认文字Logo
+                showDefaultLogo();
+            }
+            
+            // 设置网站标题
+            document.getElementById('logoPrefix').textContent = LOGO_CONFIG.prefix;
+            document.getElementById('logoSuffix').textContent = LOGO_CONFIG.suffix;
+        }
+        
+        // 显示默认Logo（文字）
+        function showDefaultLogo() {
+            const logoContainer = document.getElementById('logoImage');
+            logoContainer.innerHTML = `<div class="logo-text">${LOGO_CONFIG.defaultText}</div>`;
+        }
+        
+        // ============================
+        // 页面切换系统
+        // ============================
+        
+        // 页面切换函数
+        function showPage(pageId) {
+            console.log('切换页面到:', pageId);
+            
+            // 1. 更新导航按钮状态
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 2. 查找并激活当前按钮
+            const buttons = document.querySelectorAll(`.nav-btn`);
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(pageId)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 3. 切换页面显示
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            } else {
+                console.error('找不到页面:', pageId);
+            }
+            
+            // 4. 更新URL（支持浏览器后退按钮）
+            history.pushState({ page: pageId }, '', `#${pageId}`);
+            
+            // 5. 滚动到顶部
+            window.scrollTo(0, 0);
+            
+            // 6. 关闭移动端菜单（如果打开）
+            const mobileNav = document.getElementById('mobileNav');
+            if (window.innerWidth <= 1024 && mobileNav.classList.contains('active')) {
+                mobileNav.classList.remove('active');
+            }
+            
+            // 7. 如果是破解/开源页面，更新仓库信息
+            if (pageId === 'cracked') {
+                updateRepoPageContent();
+            }
+        }
+        
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('active');
+        }
+        
+        // ============================
+        // 破解/开源仓库数据配置
+        // ============================
+        
+        // 破解/开源仓库数据（双语）
+        const REPO_DATA = {
+            zh: {
+                cracked: {
+                    title: "破解项目￼仓库",
+                    description: "包含 MR-S团队或其他合作人/团队 破解的各种付费/免费脚本，持续更新中......",
+                    updateDate: "最新更新: 2025-12-31",
+                    version: "v2.0",
+                    updateContent: `
+                        <strong>更新内容:</strong>
+                        <ul>
+                            <li>清水GBv6.1￼￼</li>
+                        </ul>
+                    `,
+                    scriptCount: "∞",
+                    gameCount: "∞",
+                    lastUpdate: "25-12-31-20:50",
+                    buttonText: "查看破解项目￼仓库",
+                    repoUrl: "https://github.com/doghwrf001/MR-S-Unlock/tree/Cracked-Projects" // 替换为你的破解脚本仓库链接
+                },
+                openSource: {
+                    title: "开源项目仓库",
+                    description: "包含 MR-S团队或其他合作人/团队 各种破解开源项目，完整源代码可供学习和使用！",
+                    updateDate: "最新更新: 2025-12-30",
+                    version: "v3.0",
+                    updateContent: `
+                        <strong>更新内容:</strong>
+                        <ul>
+                            <li>MR-S 99夜 残缺源</li>
+                            <li>MR-S 自动汉化 源</li>
+                        </ul>
+                    `,
+                    projectCount: "∞",
+                    stars: "∞",
+                    lastCommit: "25-12-30-19:30",
+                    buttonText: "查看开源项目仓库",
+                    repoUrl: "https://github.com/doghwrf001/MR-S-Unlock/tree/Open-Source-Projects" // 替换为你的开源项目仓库链接
+                }
+            },
+            en: {
+                cracked: {
+                    title: "Cracked Project Repository",
+                    description: "Includes various paid/free scripts cracked by the MR-S team or other collaborators/teams, continuously updating…",
+                    updateDate: "Latest Update: 2025-12-31",
+                    version: "v2.0",
+                    updateContent: `
+                        <strong>Update Content:</strong>
+                        <ul>
+                            <li>Clear water GBv6.1￼</li>
+                        </ul>
+                    `,
+                    scriptCount: "∞",
+                    gameCount: "∞",
+                    lastUpdate: "25-12-31-20:50",
+                    buttonText: "View cracked project repository",
+                    repoUrl: "https://github.com/doghwrf001/MR-S-Unlock/tree/Cracked-Projects" // Replace with your cracked scripts repo link
+                },
+                openSource: {
+                    title: "Open Source Projects Repository",
+                    description: "Includes various cracked open-source projects by the MR-S team or other collaborators/teams, with full source code available for learning and use!",
+                    updateDate: "Latest Update: 2025-12-30",
+                    version: "v3.0",
+                    updateContent: `
+                        <strong>Update Content:</strong>
+                        <ul>
+                            <li>MR-S 99 Nights Incomplete Source</li>
+                            <li>MR-S Auto Localization Source</li>
+                        </ul>
+                    `,
+                    projectCount: "∞",
+                    stars: "∞",
+                    lastCommit: "25-12-30-19:30",
+                    buttonText: "View Open Source Repository",
+                    repoUrl: "https://github.com/doghwrf001/MR-S-Unlock/tree/Open-Source-Projects" // Replace with your open source projects repo link
+                }
+            }
+        };
+        
+        // 更新破解/开源页面内容
+        function updateRepoPageContent() {
+            const data = REPO_DATA[currentLanguage];
+            if (!data) return;
+            
+            // 更新破解仓库信息
+            updateElementText('crackedRepoTitle', data.cracked.title);
+            updateElementText('crackedRepoDesc', data.cracked.description);
+            updateElementText('crackedUpdateDate', data.cracked.updateDate);
+            updateElementText('crackedUpdateVersion', data.cracked.version);
+            updateElementHTML('crackedUpdateContent', data.cracked.updateContent);
+            updateElementText('crackedScriptCount', data.cracked.scriptCount);
+            updateElementText('crackedGameCount', data.cracked.gameCount);
+            updateElementText('crackedLastUpdate', data.cracked.lastUpdate);
+            updateElementText('viewCrackedRepoText', data.cracked.buttonText);
+            
+            // 更新破解仓库链接
+            const crackedButton = document.querySelector('.btn-cracked');
+            if (crackedButton) {
+                crackedButton.href = data.cracked.repoUrl;
+            }
+            
+            // 更新开源仓库信息
+            updateElementText('openSourceRepoTitle', data.openSource.title);
+            updateElementText('openSourceRepoDesc', data.openSource.description);
+            updateElementText('openSourceUpdateDate', data.openSource.updateDate);
+            updateElementText('openSourceUpdateVersion', data.openSource.version);
+            updateElementHTML('openSourceUpdateContent', data.openSource.updateContent);
+            updateElementText('openSourceProjectCount', data.openSource.projectCount);
+            updateElementText('openSourceStars', data.openSource.stars);
+            updateElementText('openSourceLastCommit', data.openSource.lastCommit);
+            updateElementText('viewOpenSourceRepoText', data.openSource.buttonText);
+            
+            // 更新开源仓库链接
+            const openSourceButton = document.querySelector('.btn-open-source');
+            if (openSourceButton) {
+                openSourceButton.href = data.openSource.repoUrl;
+            }
+        }
+        
+        // ============================
+        // 双语系统配置
+        // ============================
+        
+        // 获取用户存储的语言偏好
+        let currentLanguage = localStorage.getItem('mrsupreme-language') || 'zh';
+        
+        // 完整翻译数据
+        const translations = {
+            zh: {
+                currentLang: '🇨🇳 CN',
+                title: 'MRSupreme - Roblox脚本',
+                tagline: 'MRSupreme是Roblox脚本 - 增强您的游戏体验',
+                subtitle: 'MRSupreme脚本官网：解决方案，包含脚本、服务、社区和支持',
+                
+                // 导航文本
+                navHome: '首页',
+                navSupport: '支持',
+                navScripts: '脚本介绍',
+                navCracked: '破解/开源',
+                navServices: '其他服务',
+                navCommunity: '社区',
+                navAbout: '关于',
+                
+                // 首页内容
+                getScriptTitle: '获取脚本￼',
+                getScriptText: '要使用 MRSupreme 脚本，您需要先下载脚本执行器。以下是获取和使用脚本的步骤：',
+                getScriptSteps: [
+                    '下载并安装支持的脚本执行器（推荐Delta,其他未测试过）',
+                    '复制下方链接并打开查看',
+                    '在游戏中打开执行器并粘贴脚本',
+                    '执行脚本并享受增强的游戏体验'
+                ],
+                copyScriptText: '查看链接￼',
+                executorText: '获取 Delta（推荐）',
+                
+                getKeyTitle: '获取密钥',
+                getKeyText: 'MRSupreme脚本需要密钥才能运行。以下是获取密钥的方法：',
+                getKeyMethods: [
+                    '关注脚本更新公告获取密钥信息',
+                    '通过官方社区获取密钥支持',
+                    '留意下方脚本密钥'
+                ],
+                copyKeyText: '复制密钥',
+                
+                channelsTitle: '官方频道',
+                channelsText: '加入我们的官方社区，获取最新脚本更新、教程和即时支持：',
+                discordDesc: '未使用',
+                joinDiscordText: '加入 Discord',
+                kookDesc: '加入KOOK官方社区，获取密钥支持、脚本更新和即时帮助。',
+                joinKookText: '加入 KOOK',
+                
+                changelogTitle: '日志',
+                changelogText: '查看 MRSupreme 的最新日志历史：',
+                updateDate1: '2025年12月29日 - v0.0.5',
+       updateContent1: `<strong>恢复通知￼：</strong>
+            <ul>
+                <li>脚本已恢复￼</li>
+                <li>已进行全面整改￼</li>
+            </ul>`,
+                updateDate2: '2025年12月17日 - v0.0.4',
+       updateContent2: `<strong>[+]：</strong>
+            <ul>
+                <li>官网新增加 ￼破解/开源 页面￼￼</li>
+                <li>自行查看￼</li>
+            </ul>`,
+                updateDate3: '2025年12月12日 - v0.0.3',
+       updateContent3: `<strong>重要通知：</strong>
+            <ul>
+                <li>脚本已关闭</li>
+                <li>进行全面整改</li>
+                <li>回归时间待定</li>
+                <li>感谢理解，非常抱歉!</li>
+            </ul>`,
+               updateDate4: '2025年12月10日 - v0.0.2',
+       updateContent4: `<strong>维护通知：</strong>
+            <ul>
+                <li>脚本已进行定期维护</li>
+                <li>优化脚本执行效率，提升30%性能</li>
+                <li>修复已知bug</li>
+                <li>增强脚本稳定性</li>
+            </ul>`,
+                updateDate5: '2025年12月8日 - v0.0.1',
+                updateContent5: `<strong>主要通知：</strong>
+                    <ul>
+                        <li>上线最新版官网</li>
+                        <li>非常不错</li>
+                        <li>基础功能</li>
+                        <li>简单易用的界面</li>
+                    </ul>`,
+                changelogUpdateText: '更多历史版本信息请访问我们的社区查看完整日志。',
+                
+                devTeamTitle: '开发团队',
+                devTeamText: '认识MRSupreme背后的开发团队：',
+                dev1Name: 'MR',
+                dev1Role: 'MR-S团队负责人/脚本主作者',
+                dev1Desc: '负责脚本核心功能开发与维护',
+                contactTitle1: '联系方式：',
+                dev2Name: 'HHH',
+                dev2Role: 'MR-S团队核心成员/脚本副作者',
+                dev2Desc: '负责脚本优化，脚本次要功能开发,提供最佳用户体验。',
+                contactTitle2: '联系方式：',
+                
+                // 支持页面
+                supportTitle: '售后服务',
+                supportDesc: '售后服务须知',
+                importantNotesTitle: '重要须知',
+                importantNotesList: [
+                    '账号类型:只保证账号可登,登上后售后无效',
+                    '脚本类型:暂时没有'
+                ],
+                supportInfoTitle: '支持',
+                supportInfoList: [
+                    '官方邮箱: mrsupreme01@outlook.com',
+                    '有任何问题请发邮件反馈',
+                    '合作相关事宜亦可使用上述邮箱发送相关文件'
+                ],
+                supportNoticeTitle: '重要说明❗️',
+                supportNoticeText: '有问题可以反馈,没问题瞎发邮件，将导致被永久拉黑!',
+                
+                // 脚本介绍页面
+                scriptsTitle: '脚本介绍',
+                scriptsDesc: 'MRSupreme 脚本介绍',
+                coreFeaturesTitle: '主要',
+                coreFeaturesList: [
+                    '<strong>MR-S团队与多位</strong> -团队/个人 合作/授权,提供高质量脚本',
+                    '<strong>MR-S团队保障</strong> -脚本不会受到roblox检测',
+                    '<strong>安全保护</strong> - 防反作弊检测机制和隐私保护',
+                    '<strong>性能优化</strong> - 减少资源占用，提升运行效率'
+                ],
+                tutorialTitle: '脚本使用教程',
+                tutorialSteps: [
+                    '下载并安装脚本执行器（推荐Delta）',
+                    '复制MRSupreme脚本代码',
+                    '在游戏中打开执行器界面',
+                    '粘贴脚本代码并执行',
+                    '根据提示输入密钥',
+                    '在游戏内打开MRSupreme菜单',
+                    '启动您需要的脚本/功能',
+                    '开始享受增强的游戏体验'
+                ],
+                warningTitle: '重要提示❗️',
+                warningText: '某些服务器有反作弊,使用脚本/功能 后可能会触发反作弊，后果请自行承担!',
+                
+                // 破解/开源页面
+                crackedTitle: '破解/开源仓库',
+                crackedDesc: '这里存放 MR-S团队或其他合作人/团队的 破解项目和开源项目!',
+                crackedNoticeTitle: '注意：',
+                crackedNoticeText: '<strong>破解项目￼</strong>：仅提供脚本链接，仅供学习交流使用<br><strong>开源项目</strong>：提供完整源代码，支持查看和下载<br>❗️请遵守相关法律法规，合理使用这些资源',
+                
+                // 破解/开源页面新增翻译
+                crackedRepoTitle: "破解￼项目仓库",
+                crackedRepoDesc: "包含 MR-S团队或其他合作人/团队 破解的各种付费/免费脚本，持续更新中......",
+                crackedUpdateDate: "最新更新: 2025-12-31",
+                crackedUpdateVersion: "v2.0",
+                crackedUpdateContent: `<strong>更新内容:</strong>
+                    <ul>
+                        <li>清水GBv6.1</li>
+                    </ul>`,
+                crackedScriptCount: "∞",
+                crackedGameCount: "∞",
+                crackedLastUpdate: "25-12-31-20:50",
+                viewCrackedRepoText: "查看破解项目仓库",
+                
+                openSourceRepoTitle: "开源项目仓库",
+                openSourceRepoDesc: "包含 MR-S团队或其他合作人/团队 各种破解开源项目，完整源代码可供学习和使用！",
+                openSourceUpdateDate: "最新更新: 2025-12-30",
+                openSourceUpdateVersion: "v3.0",
+                openSourceUpdateContent: `<strong>更新内容:</strong>
+                    <ul>
+                        <li>￼MR-S 99夜 残缺源</li>
+                        <li>MR-S 自动汉化 源</li>
+                    </ul>`,
+                openSourceProjectCount: "∞",
+                openSourceStars: "∞",
+                openSourceLastCommit: "25-12-30-19:30",
+                viewOpenSourceRepoText: "查看开源项目仓库",
+                
+                crackedFAQTitle: '常见问题',
+                crackedFAQList: [
+                    '<strong>破解脚本和开源有什么区别？</strong><br>破解脚本是 MR-S团队或其他合作人/团队 破解了其他作者的付费/免费脚本，仅提供使用链接；开源是 MR-S团队或其他合作人/团队 破解的其他脚本，提供完整源代码。',
+                    '<strong>这些脚本安全吗？</strong><br>所有脚本都经过测试，但不保证100%安全，使用前请自行评估风险。',
+                    '<strong>我可以使用这些脚本吗？</strong><br>可以，但请仅用于学习目的，并遵守游戏规则。',
+                    '<strong>为何有问题？</strong><br>我们仅做破解/开源工作，脚本有任何问题自行解决！'
+                ],
+                
+                // 其他服务页面
+                servicesTitle: '其他服务',
+                servicesDesc: '除了脚本外，我们还提供以下Roblox相关服务：',
+                robloxAccountsTitle: 'Roblox 白号',
+                robloxAccountsDesc: '提供高质量的Roblox白号，保证安全、稳定、无封禁记录。适合需要多个账号的用户。',
+                robloxAccountsFeatures: [
+                    '全新的Roblox账号',
+                    '随机，30天，70天，100天，180天，1年....（未上架：08年，10年）',
+                    '随机用户名和密码',
+                    '放心购买，无任何绑定',
+                    '购前须知:所有账号无任何绑定,给你前我们都会检查一遍账号，因此账号类型无售后，最多保证账号在无法登录情况下更换，成功登录上售后无效！'
+                ],
+                contactPurchaseText: '联系购买',
+                servicesNotice: '所有服务均通过官方渠道进行，保证交易安全。如有疑问，请通过官方社区联系我们。',
+                
+                // 社区页面
+                communityTitle: '社区',
+                communityDesc: '加入我们的社区，与其他玩家交流，获取最新信息和支持',
+                communityDiscordDesc: '未使用',
+                joinCommunityDiscordText: '加入 Discord',
+                communityKookDesc: '加入KOOK官方社区，获取密钥支持、脚本更新和即时帮助。',
+                joinCommunityKookText: '加入 KOOK',
+                communityRulesTitle: '社区规则',
+                communityRulesList: [
+                    '尊重其他社区成员，文明交流',
+                    '禁止发布广告、垃圾信息',
+                    '禁止讨论破解、盗版相关内容',
+                    '问题反馈请提供详细信息和截图',
+                    '遵守Roblox游戏的服务条款',
+                    '管理员有权利处理违规行为'
+                ],
+                
+                // 关于页面
+                aboutTitle: '关于 MRSupreme',
+                aboutDesc: '了解MRSupreme项目的功能支持和开发计划：',
+                freeVersionTitle: '免费版支持',
+                freeVersionFeatures: [
+                    '基础脚本功能',
+                    '简单UI界面和设置',
+                    '热门/冷门 Roblox游戏支持',
+                    '社区技术支持和帮助',
+                    '定期安全更新和维护'
+                ],
+                paidVersionTitle: '付费版支持',
+                paidVersionFeatures: [
+                    '高级脚本功能',
+                    '定制化游戏支持',
+                    '优先技术支持和更新',
+                    '专属社区身份和权限',
+                    '24/7 技术/售后支持'
+                ],
+                paidStatusTitle: '付费版状态：',
+                paidStatusText: '目前暂无付费版本制作计划，所有功能均为免费提供。如未来推出付费版，将在官方社区提前通知。',
+                aboutGoalText: 'MR-S团队:提供高质量、安全、稳定的免费脚本服务，帮助Roblox玩家获得更好的游戏体验。',
+                securityTitle: '安全声明❗️',
+                securityText: 'MRSupreme脚本仅用于学习和研究目的。我们不对使用脚本可能导致的任何后果负责。请遵守游戏规则，合理使用脚本。',
+                
+                // 通用
+                footerText1: '© 2026 MRSupreme',
+                footerText2: '',
+                copiedText: '已成功复制到剪贴板！',
+                loadingText: '加载中...',
+                errorText: '发生错误，请重试'
+            },
+            
+            en: {
+                currentLang: '🇺🇸 EN',
+                title: 'MRSupreme - Roblox Script',
+                tagline: 'MRSupreme is a Roblox script that enhances your gaming experience！',
+                subtitle: 'MRSupreme Script Official Website: Solutions covering scripts, services, community, and support!',
+                
+                // 导航文本
+                navHome: 'Home',
+                navSupport: 'Support',
+                navScripts: 'Scripts',
+                navCracked: 'Cracked/Open Source',
+                navServices: 'Services',
+                navCommunity: 'Community',
+                navAbout: 'About',
+                
+                // 首页内容
+                getScriptTitle: 'Get Script',
+                getScriptText: 'To use the MRSupreme script, you need to download a script executor first. Here are the steps to obtain and use the script:',
+                getScriptSteps: [
+                    'Download and install a supported script executor (recommended Delta, others not tested)',
+                    'Copy the link below and open it to view',
+                    'Open the executor in-game and paste the script',
+                    'Execute the script and enjoy the enhanced gaming experience'
+                ],
+                copyScriptText: 'View link',
+                executorText: 'Get Delta (Recommended)',
+                
+                getKeyTitle: 'Get Key',
+                getKeyText: 'MRSupreme script requires a key to run. Here are the methods to obtain a key:',
+                getKeyMethods: [
+                    'Follow script update announcements for key information',
+                    'Get key support through official communities',
+                    'Pay attention to the script key below'
+                ],
+                copyKeyText: 'Copy Key',
+                
+                channelsTitle: 'Official Channels',
+                channelsText: 'Join our official communities for the latest script updates, tutorials and instant support:',
+                discordDesc: 'Not used',
+                joinDiscordText: 'Join Discord',
+                kookDesc: 'Join the KOOK official community for key support, script updates and instant help.',
+                joinKookText: 'Join KOOK',
+                
+                changelogTitle: 'Changelog',
+                changelogText: 'View the latest updates and version history of MRSupreme script:',
+                updateDate1: 'December 29, 2025 - v0.0.5',
+       updateContent1: `<strong> Restoration Notice：</strong>
+            <ul>
+                <li>Script restored</li>
+                <li>Comprehensive rectification has been completed</li>
+            </ul>`,
+                updateDate2: 'December 17, 2025 - v0.0.4',
+       updateContent2: `<strong>[+]：</strong>
+            <ul>
+                <li>Official website adds a Cracked/Open Source page</li>
+                <li>Check it out yourself</li>
+            </ul>`,
+                updateDate3: 'December 12, 2025 - v0.0.3',
+       updateContent3: `<strong> Important notice：</strong>
+            <ul>
+                <li>Scripts have been closed</li>
+                <li>Conducting comprehensive rectification</li>
+                <li>Return date to be determined</li>
+                <li>Thank you for your understanding, and our sincere apologies!</li>
+            </ul>`,
+               updateDate4: 'December 10, 2025 - v0.0.2',
+updateContent4: `<strong>Maintenance Notice:</strong>
+    <ul>
+        <li>Script has undergone regular maintenance</li>
+        <li>Optimized script execution efficiency, improved performance by 30%</li>
+        <li>Fixed known bugs</li>
+        <li>Enhanced script stability</li>
+    </ul>`,
+                updateDate5: 'December 8, 2025 - v0.0.1',
+                updateContent5: `<strong>Main Notice:</strong>
+                    <ul>
+                        <li>Launched the latest version of the website</li>
+                        <li>Excellent performance</li>
+                        <li>Basic functions</li>
+                        <li>Simple and easy-to-use interface</li>
+                    </ul>`,
+                changelogUpdateText: 'For more historical version information, please visit our community to view the complete changelog.',
+                
+                devTeamTitle: 'Development Team',
+                devTeamText: 'Meet the development team behind MRSupreme:',
+                dev1Name: 'MR',
+                dev1Role: 'MR-S Team Lead / Main Script Developer',
+                dev1Desc: 'Responsible for script core function development and maintenance',
+                contactTitle1: 'Contact:',
+                dev2Name: 'HHH',
+                dev2Role: 'MR-S Team Core Members / Assistant Script Developer',
+                dev2Desc: 'Responsible for script optimization, secondary function development, providing the best user experience.',
+                contactTitle2: 'Contact:',
+                
+                // 支持页面
+                supportTitle: 'After-sales Service',
+                supportDesc: 'After-sales service notice',
+                importantNotesTitle: 'Important Notes',
+                importantNotesList: [
+                    'Account type: Only guarantee that the account can be logged in, after successful login, after-sales service is invalid',
+                    'Script type: Not available for now'
+                ],
+                supportInfoTitle: 'Support',
+                supportInfoList: [
+                    'Official email: mrsupreme01@outlook.com',
+                    'If you have any issues, please send feedback via email.',
+                    'Cooperation-related matters can also be addressed by sending relevant documents to the above email.'
+                ],
+                supportNoticeTitle: 'Important notice❗️',
+                supportNoticeText: 'You can provide feedback if you have issues; sending emails without a valid reason will result in being permanently blacklisted!',
+                
+                // 脚本介绍页面
+                scriptsTitle: 'Script Introduction',
+                scriptsDesc: 'MRSupreme Script Introduction',
+                coreFeaturesTitle: 'Main',
+                coreFeaturesList: [
+                    '<strong>MR-S team collaborates with multiple</strong> -teams/individuals through cooperation/authorization to provide high-quality scripts!',
+                    '<strong>MR-S team guarantees</strong> -Scripts are not detected by Roblox!',
+                    '<strong>Security Protection</strong> -Anti-cheat detection bypass and privacy protection mechanisms!',
+                    '<strong>Performance Optimization</strong> - Reduce resource usage and improve efficiency'
+                ],
+                tutorialTitle: 'Script usage tutorial',
+                tutorialSteps: [
+                    'Download and install a script executor (recommended Delta)',
+                    'Copy the MRSupreme script code',
+                    'Open the executor interface in-game',
+                    'Paste the script code and execute',
+                    'Enter the key according to the prompt',
+                    'Open the MRSupreme menu in-game',
+                    'Launch the script/features you need',
+                    'Enjoy the enhanced gaming experience'
+                ],
+                warningTitle: 'Important Notice❗️',
+                warningText: 'Some servers have anti-cheat systems; using scripts/features may trigger them, and consequences are at your own risk!',
+                
+                // 破解/开源页面
+                crackedTitle: 'Cracked/Open Source Scripts Repository',
+                crackedDesc: 'This repository hosts cracked projects and open-source projects by the MR-S team or other collaborators/teams!',
+                crackedNoticeTitle: 'Note:',
+                crackedNoticeText: '<strong> Cracked Projects</strong>: Only provide script links, for learning and exchange purposes only<br><strong>Open Source Projects</strong>: Provide complete source code for viewing and downloading<br>❗️Please comply with relevant laws and regulations, use these resources reasonably',
+                
+                // 破解/开源页面新增翻译
+                crackedRepoTitle: "Cracked Project Repository",
+                crackedRepoDesc: "Includes various paid/free scripts cracked by the MR-S team or other collaborators/teams, continuously updating…",
+                crackedUpdateDate: "Latest Update: 2025-12-31",
+                crackedUpdateVersion: "v2.0",
+                crackedUpdateContent: `<strong>Update Content:</strong>
+                    <ul>
+                        <li>Clear water GBv6.1￼</li>
+                    </ul>`,
+                crackedScriptCount: "∞",
+                crackedGameCount: "∞",
+                crackedLastUpdate: "25-12-31-20:50",
+                viewCrackedRepoText: "View cracked project repository",
+                
+                openSourceRepoTitle: "Open Source Projects Repository",
+                openSourceRepoDesc: "Includes various cracked open-source projects by the MR-S team or other collaborators/teams, with full source code available for learning and use!",
+                openSourceUpdateDate: "Latest Update: 2025-12-30",
+                openSourceUpdateVersion: "v3.0",
+                openSourceUpdateContent: `<strong>Update Content:</strong>
+                    <ul>
+                        <li>MR-S 99 Nights Incomplete Source</li>
+                        <li>MR-S Auto Localization Source</li>
+                    </ul>`,
+                openSourceProjectCount: "∞",
+                openSourceStars: "∞",
+                openSourceLastCommit: "25-12-30-19:30",
+                viewOpenSourceRepoText: "View Open Source Repository",
+                
+                crackedFAQTitle: 'FAQ',
+                crackedFAQList: [
+                    '<strong>What\'s the difference between cracked and open source?</strong><br>Cracked scripts refer to paid/free scripts from other authors that were cracked by the MR-S team or other collaborators/teams, and only usage links are provided. Open source refers to other scripts cracked by the MR-S team or other collaborators/teams, with complete source code provided.',
+                    '<strong>Are these scripts safe?</strong><br>All scripts are tested, but not 100% guaranteed safe. Please assess risks before use.',
+                    '<strong>Can I use these scripts?</strong><br>Yes, but only for learning purposes and follow game rules.',
+                    '<strong>Why is there an issue? </strong><br>We only handle cracking/open-source work; resolve any script issues on your own!'
+                ],
+                
+                // 其他服务页面
+                servicesTitle: 'Other Services',
+                servicesDesc: 'In addition to scripts, we also provide the following Roblox-related services:',
+                robloxAccountsTitle: 'Roblox Fresh Accounts',
+                robloxAccountsDesc: 'Provide high-quality Roblox fresh accounts, ensuring safety, stability, and no ban records. Suitable for users who need multiple accounts.',
+                robloxAccountsFeatures: [
+                    'Brand new Roblox accounts',
+                    'Random, 30 days, 70 days, 100 days, 180 days, 1 year.... (not listed: 08 year, 10 year)',
+                    'Random username and password',
+                    'Safe purchase, no binding',
+                    'Purchase notice: All accounts have no binding, we check each account before delivery, therefore no after-sales service for account type, only guarantee replacement if the account cannot be logged in, after successful login, after-sales service is invalid!'
+                ],
+                contactPurchaseText: 'Contact to Purchase',
+                servicesNotice: 'All services are conducted through official channels to ensure transaction security. If you have any questions, please contact us through official communities.',
+                
+                // 社区页面
+                communityTitle: 'Community',
+                communityDesc: 'Join our community to communicate with other players, get the latest information and support',
+                communityDiscordDesc: 'Not used',
+                joinCommunityDiscordText: 'Join Discord',
+                communityKookDesc: 'Join the KOOK official community for key support, script updates and instant help.',
+                joinCommunityKookText: 'Join KOOK',
+                communityRulesTitle: 'Community Rules',
+                communityRulesList: [
+                    'Respect other community members, communicate politely',
+                    'No advertising or spam',
+                    'No discussion of cracking, piracy related content',
+                    'Provide detailed information and screenshots for problem feedback',
+                    'Comply with Roblox game terms of service',
+                    'Administrators have the right to handle violations'
+                ],
+                
+                // 关于页面
+                aboutTitle: 'About MRSupreme',
+                aboutDesc: 'Learn about MRSupreme project features support and development plans:',
+                freeVersionTitle: 'Free Version Support',
+                freeVersionFeatures: [
+                    'Basic script functions',
+                    'Simple UI interface and settings',
+                    'Hot/Cold Roblox game support',
+                    'Community technical support and help',
+                    'Regular security updates and maintenance'
+                ],
+                paidVersionTitle: 'Paid Version Support',
+                paidVersionFeatures: [
+                    'Advanced script functions',
+                    'Customized game support',
+                    'Priority technical support and updates',
+                    'Exclusive community status and permissions',
+                    '24/7 technical/after-sales support'
+                ],
+                paidStatusTitle: 'Paid Version Status:',
+                paidStatusText: 'Currently no plans for paid version development, all features are provided for free. If a paid version is launched in the future, advance notice will be given in official communities.',
+                aboutGoalText: 'MR-S Team: Provides high-quality, safe, and stable free script services to help Roblox players achieve a better gaming experience!',
+                securityTitle: 'Security Statement❗️',
+                securityText: 'MRSupreme scripts are for learning and research purposes only. We are not responsible for any consequences that may result from using scripts. Please follow game rules and use scripts reasonably.',
+                
+                // 通用
+                footerText1: '© 2026 MRSupreme',
+                footerText2: '',
+                copiedText: 'Successfully copied to clipboard!',
+                loadingText: 'Loading...',
+                errorText: 'An error occurred, please try again'
+            }
+        };
+        
+        // 切换语言
+        function switchLanguage() {
+            currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('mrsupreme-language', currentLanguage);
+            document.documentElement.lang = currentLanguage;
+            updateAllContent();
+            
+            // 更新当前页面的内容
+            const currentPage = document.querySelector('.page.active').id;
+            if (currentPage === 'cracked') {
+                updateRepoPageContent();
+            }
+            
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 300);
+        }
+        
+        // 更新所有内容
+        function updateAllContent() {
+            const t = translations[currentLanguage];
+            
+            // 更新页面标题
+            document.title = t.title;
+            document.getElementById('title').innerHTML = `<i class="fas fa-crown"></i> MRSupreme`;
+            document.getElementById('tagline').textContent = t.tagline;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            
+            // 更新导航文本
+            document.querySelectorAll('.nav-text').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+            
+            // 更新语言按钮文本
+            document.getElementById('currentLang').textContent = t.currentLang;
+            
+            // 更新首页内容
+            updateElementText('getScriptTitle', t.getScriptTitle);
+            updateElementText('getScriptText', t.getScriptText);
+            updateList('getScriptSteps', t.getScriptSteps);
+            updateElementText('copyScriptText', t.copyScriptText);
+            updateElementText('executorText', t.executorText);
+            
+            updateElementText('getKeyTitle', t.getKeyTitle);
+            updateElementText('getKeyText', t.getKeyText);
+            updateList('getKeyMethods', t.getKeyMethods);
+            updateElementText('copyKeyText', t.copyKeyText);
+            
+            updateElementText('channelsTitle', t.channelsTitle);
+            updateElementText('channelsText', t.channelsText);
+            updateElementText('discordDesc', t.discordDesc);
+            updateElementText('joinDiscordText', t.joinDiscordText);
+            updateElementText('kookDesc', t.kookDesc);
+            updateElementText('joinKookText', t.joinKookText);
+            
+            updateElementText('changelogTitle', t.changelogTitle);
+            updateElementText('changelogText', t.changelogText);
+            updateElementText('updateDate1', t.updateDate1);
+            updateElementHTML('updateContent1', t.updateContent1);
+            updateElementText('updateDate2', t.updateDate2);
+            updateElementHTML('updateContent2', t.updateContent2);
+            updateElementText('updateDate3', t.updateDate3);
+            updateElementHTML('updateContent3', t.updateContent3);
+            updateElementText('updateDate4', t.updateDate4);
+            updateElementHTML('updateContent4', t.updateContent4);
+            updateElementText('updateDate5', t.updateDate5);
+            updateElementHTML('updateContent5', t.updateContent5);
+            updateElementText('changelogUpdateText', t.changelogUpdateText);
+            
+            updateElementText('devTeamTitle', t.devTeamTitle);
+            updateElementText('devTeamText', t.devTeamText);
+            updateElementText('dev1Name', t.dev1Name);
+            updateElementText('dev1Role', t.dev1Role);
+            updateElementText('dev1Desc', t.dev1Desc);
+            updateElementText('contactTitle1', t.contactTitle1);
+            updateElementText('dev2Name', t.dev2Name);
+            updateElementText('dev2Role', t.dev2Role);
+            updateElementText('dev2Desc', t.dev2Desc);
+            updateElementText('contactTitle2', t.contactTitle2);
+            
+            // 更新支持页面内容
+            updateElementText('supportTitle', t.supportTitle);
+            updateElementText('supportDesc', t.supportDesc);
+            updateElementText('importantNotesTitle', t.importantNotesTitle);
+            updateListWithHTML('importantNotesList', t.importantNotesList);
+            updateElementText('supportInfoTitle', t.supportInfoTitle);
+            updateListWithHTML('supportInfoList', t.supportInfoList);
+            updateElementText('supportNoticeTitle', t.supportNoticeTitle);
+            updateElementText('supportNoticeText', t.supportNoticeText);
+            
+            // 更新脚本中心页面内容
+            updateElementText('scriptsTitle', t.scriptsTitle);
+            updateElementText('scriptsDesc', t.scriptsDesc);
+            updateElementText('coreFeaturesTitle', t.coreFeaturesTitle);
+            updateListWithHTML('coreFeaturesList', t.coreFeaturesList);
+            updateElementText('tutorialTitle', t.tutorialTitle);
+            updateList('tutorialSteps', t.tutorialSteps);
+            updateElementText('warningTitle', t.warningTitle);
+            updateElementText('warningText', t.warningText);
+            
+            // 更新破解/开源页面内容
+            updateElementText('crackedTitle', t.crackedTitle);
+            updateElementText('crackedDesc', t.crackedDesc);
+            updateElementText('crackedNoticeTitle', t.crackedNoticeTitle);
+            updateElementHTML('crackedNoticeText', t.crackedNoticeText);
+            updateElementText('crackedFAQTitle', t.crackedFAQTitle);
+            updateListWithHTML('crackedFAQList', t.crackedFAQList);
+            
+            // 更新破解/开源页面新增字段
+            updateElementText('crackedRepoTitle', t.crackedRepoTitle);
+            updateElementText('crackedRepoDesc', t.crackedRepoDesc);
+            updateElementText('crackedUpdateDate', t.crackedUpdateDate);
+            updateElementText('crackedUpdateVersion', t.crackedUpdateVersion);
+            updateElementHTML('crackedUpdateContent', t.crackedUpdateContent);
+            updateElementText('crackedScriptCount', t.crackedScriptCount);
+            updateElementText('crackedGameCount', t.crackedGameCount);
+            updateElementText('crackedLastUpdate', t.crackedLastUpdate);
+            updateElementText('viewCrackedRepoText', t.viewCrackedRepoText);
+            
+            updateElementText('openSourceRepoTitle', t.openSourceRepoTitle);
+            updateElementText('openSourceRepoDesc', t.openSourceRepoDesc);
+            updateElementText('openSourceUpdateDate', t.openSourceUpdateDate);
+            updateElementText('openSourceUpdateVersion', t.openSourceUpdateVersion);
+            updateElementHTML('openSourceUpdateContent', t.openSourceUpdateContent);
+            updateElementText('openSourceProjectCount', t.openSourceProjectCount);
+            updateElementText('openSourceStars', t.openSourceStars);
+            updateElementText('openSourceLastCommit', t.openSourceLastCommit);
+            updateElementText('viewOpenSourceRepoText', t.viewOpenSourceRepoText);
+            
+            // 更新其他服务页面内容
+            updateElementText('servicesTitle', t.servicesTitle);
+            updateElementText('servicesDesc', t.servicesDesc);
+            updateElementText('robloxAccountsTitle', t.robloxAccountsTitle);
+            updateElementText('robloxAccountsDesc', t.robloxAccountsDesc);
+            updateListWithHTML('robloxAccountsFeatures', t.robloxAccountsFeatures);
+            updateElementText('contactPurchaseText', t.contactPurchaseText);
+            updateElementText('servicesNotice', t.servicesNotice);
+            
+            // 更新社区页面内容
+            updateElementText('communityTitle', t.communityTitle);
+            updateElementText('communityDesc', t.communityDesc);
+            updateElementText('communityDiscordDesc', t.communityDiscordDesc);
+            updateElementText('joinCommunityDiscordText', t.joinCommunityDiscordText);
+            updateElementText('communityKookDesc', t.communityKookDesc);
+            updateElementText('joinCommunityKookText', t.joinCommunityKookText);
+            updateElementText('communityRulesTitle', t.communityRulesTitle);
+            updateListWithHTML('communityRulesList', t.communityRulesList);
+            
+            // 更新关于页面内容
+            updateElementText('aboutTitle', t.aboutTitle);
+            updateElementText('aboutDesc', t.aboutDesc);
+            updateElementText('freeVersionTitle', t.freeVersionTitle);
+            updateList('freeVersionFeatures', t.freeVersionFeatures);
+            updateElementText('paidVersionTitle', t.paidVersionTitle);
+            updateList('paidVersionFeatures', t.paidVersionFeatures);
+            updateElementHTML('paidStatusTitle', t.paidStatusTitle);
+            updateElementText('paidStatusText', t.paidStatusText);
+            updateElementText('aboutGoalText', t.aboutGoalText);
+            updateElementText('securityTitle', t.securityTitle);
+            updateElementText('securityText', t.securityText);
+            
+            // 更新通用内容
+            updateElementText('footerText1', t.footerText1);
+            updateElementText('footerText2', t.footerText2);
+            updateElementText('copiedText', t.copiedText);
+        }
+        
+        // 辅助函数
+        function updateElementText(id, text) {
+            const element = document.getElementById(id);
+            if (element) element.textContent = text;
+        }
+        
+        function updateElementHTML(id, html) {
+            const element = document.getElementById(id);
+            if (element) element.innerHTML = html;
+        }
+        
+        function updateList(elementId, items) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '';
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    element.appendChild(li);
+                });
+            }
+        }
+        
+        function updateListWithHTML(elementId, items) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '';
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = item;
+                    element.appendChild(li);
+                });
+            }
+        }
+        
+        // ============================
+        // 复制功能
+        // ============================
+        
+        function showCopiedNotice() {
+            const notice = document.getElementById('copiedNotice');
+            notice.style.display = 'flex';
+            setTimeout(() => {
+                notice.classList.add('fade-out');
+                setTimeout(() => {
+                    notice.style.display = 'none';
+                    notice.classList.remove('fade-out');
+                }, 300);
+            }, 2000);
+        }
+        
+        function copyToClipboard(text) {
+            const originalText = document.getElementById('copiedText').textContent;
+            document.getElementById('copiedText').innerHTML = `<span class="loading"></span> ${translations[currentLanguage].loadingText}`;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        document.getElementById('copiedText').textContent = translations[currentLanguage].copiedText;
+                        showCopiedNotice();
+                    })
+                    .catch(err => {
+                        console.error('复制失败: ', err);
+                        fallbackCopy(text);
+                    });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+        
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                document.getElementById('copiedText').textContent = translations[currentLanguage].copiedText;
+                showCopiedNotice();
+            } catch (err) {
+                console.error('传统复制方法失败: ', err);
+                alert(translations[currentLanguage].errorText);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+        
+        // ============================
+        // 页面初始化
+        // ============================
+        
+        function initLanguage() {
+            document.documentElement.lang = currentLanguage;
+            updateAllContent();
+        }
+        
+        // 处理URL哈希
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1);
+            const validPages = ['home', 'servers', 'scripts', 'cracked', 'services', 'community', 'about'];
+            
+            if (hash && validPages.includes(hash)) {
+                showPage(hash);
+            } else {
+                showPage('home');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM加载完成');
+            
+            // 初始化Logo
+            loadLogo();
+            
+            // 初始化语言系统
+            initLanguage();
+            
+            // 绑定语言切换事件
+            document.getElementById('languageBtn').addEventListener('click', switchLanguage);
+            
+            // 绑定复制按钮事件
+            document.getElementById('copyScriptBtn').addEventListener('click', () => {
+                const scriptContent = document.getElementById('scriptContent').textContent;
+                copyToClipboard(scriptContent);
+            });
+            
+            document.getElementById('copyKeyBtn').addEventListener('click', () => {
+                const keyContent = document.getElementById('keyContent').textContent;
+                copyToClipboard(keyContent);
+            });
+            
+            // 绑定移动端菜单按钮
+            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+            
+            // 初始页面加载
+            handleHashChange();
+            
+            // 支持浏览器后退/前进按钮
+            window.addEventListener('popstate', (event) => {
+                if (event.state && event.state.page) {
+                    showPage(event.state.page);
+                } else {
+                    handleHashChange();
+                }
+            });
+            
+            // 监听哈希变化
+            window.addEventListener('hashchange', handleHashChange);
+            
+            // 键盘快捷键支持
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                    e.preventDefault();
+                    switchLanguage();
+                }
+            });
+            
+            // 初始化仓库链接
+            updateRepoPageContent();
+        });
+    </script>
+</body>
+</html>
