@@ -19,12 +19,45 @@
             min-height: 100vh;
             padding-top: 80px; /* 为固定导航栏留出空间 */
             transition: all 0.3s;
+            position: relative;
+        }
+        
+        /* 背景图容器 */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            filter: blur(2px);
+        }
+        
+        /* 默认渐变背景（当没有自定义背景图时显示） */
+        .gradient-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            z-index: -2;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         /* ================== 顶部导航栏 ================== */
@@ -61,19 +94,28 @@
             font-size: 1.8rem;
         }
         
-        /* 圆形Logo样式 */
+        /* 圆形Logo样式 - 增大尺寸 */
         .logo-image {
-            width: 40px;
-            height: 40px;
+            width: 60px; /* 从40px增大到60px */
+            height: 60px; /* 从40px增大到60px */
+            min-width: 60px; /* 确保最小尺寸 */
+            min-height: 60px; /* 确保最小尺寸 */
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #4cc9f0;
-            box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+            border: 3px solid #4cc9f0; /* 边框加粗 */
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.7); /* 阴影增强 */
             background: linear-gradient(135deg, #4361ee, #3a0ca3);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        /* Logo悬停效果 */
+        .logo-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(76, 201, 240, 0.9);
         }
         
         .logo-image img {
@@ -86,7 +128,8 @@
         .logo-text {
             color: #4cc9f0;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.5rem; /* 字体增大 */
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.7);
         }
         
         .site-title {
@@ -186,6 +229,18 @@
             .header-right {
                 margin-left: auto;
             }
+            
+            /* 移动端Logo调整 */
+            .logo-image {
+                width: 50px;
+                height: 50px;
+                min-width: 50px;
+                min-height: 50px;
+            }
+            
+            .logo-text {
+                font-size: 1.3rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -194,12 +249,14 @@
             }
             
             .logo-image {
-                width: 35px;
-                height: 35px;
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+                min-height: 45px;
             }
             
             .logo-text {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             
             body {
@@ -239,6 +296,7 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
         }
         
         h1 {
@@ -268,6 +326,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
         }
         
         .card:hover {
@@ -932,6 +991,12 @@
     </style>
 </head>
 <body>
+    <!-- ================== 背景图容器 ================== -->
+    <div class="background-container" id="backgroundContainer">
+        <!-- 背景图将在这里动态加载 -->
+        <div class="gradient-background"></div>
+    </div>
+
     <!-- ================== 顶部导航栏 ================== -->
     <div class="top-header">
         <div class="header-content">
@@ -1040,7 +1105,7 @@
                     
                     <div class="script-box">
                         <button class="copy-btn" id="copyScriptBtn">
-                            <i class="fas fa-copy"></i> <span id="copyScriptText">复制链接</span>
+                            <i class="fas fa-copy"></i> <span id="copyScriptText">复制</span>
                         </button>
                         <pre id="scriptContent">https://pastebin.com/raw/KLE9uDDM</pre>
                     </div>
@@ -1067,7 +1132,7 @@
                     
                     <div class="script-box">
                         <button class="copy-btn" id="copyKeyBtn">
-                            <i class="fas fa-copy"></i> <span id="copyKeyText">复制密钥</span>
+                            <i class="fas fa-copy"></i> <span id="copyKeyText">复制</span>
                         </button>
                         <pre id="keyContent">no</pre>
                     </div>
@@ -1614,7 +1679,23 @@
             prefix: 'MR',
             
             // 网站标题后缀
-            suffix: 'Supreme'
+            suffix: 'SUPREME'
+        };
+        
+        // ============================
+        // 背景图配置
+        // ============================
+        
+        const BACKGROUND_CONFIG = {
+            // 在这里设置您的背景图片URL
+            // 留空则使用默认的渐变背景
+            imageUrl: 'https://i.imgs.ovh/2026/02/05/yofd4n.png', // 示例: 'https://example.com/background.jpg' 或 'images/background.jpg'
+            
+            // 背景图透明度 (0-1)
+            opacity: 0.15,
+            
+            // 背景图模糊程度 (px)
+            blur: 2
         };
         
         // 加载Logo图片
@@ -1663,6 +1744,41 @@
         function showDefaultLogo() {
             const logoContainer = document.getElementById('logoImage');
             logoContainer.innerHTML = `<div class="logo-text">${LOGO_CONFIG.defaultText}</div>`;
+        }
+        
+        // 加载背景图
+        function loadBackground() {
+            const backgroundContainer = document.getElementById('backgroundContainer');
+            
+            if (BACKGROUND_CONFIG.imageUrl && BACKGROUND_CONFIG.imageUrl.trim() !== '') {
+                // 创建图片元素
+                const img = new Image();
+                img.src = BACKGROUND_CONFIG.imageUrl;
+                img.alt = '网站背景';
+                img.className = 'background-image';
+                img.style.opacity = BACKGROUND_CONFIG.opacity;
+                img.style.filter = `blur(${BACKGROUND_CONFIG.blur}px)`;
+                
+                // 图片加载成功
+                img.onload = function() {
+                    // 在渐变背景之上添加图片
+                    backgroundContainer.appendChild(img);
+                };
+                
+                // 图片加载失败
+                img.onerror = function() {
+                    console.log('背景图加载失败，使用默认渐变背景');
+                };
+                
+                // 设置超时
+                setTimeout(() => {
+                    if (!img.complete) {
+                        console.log('背景图加载超时，使用默认渐变背景');
+                    }
+                }, 5000);
+            } else {
+                console.log('未设置背景图，使用默认渐变背景');
+            }
         }
         
         // ============================
@@ -1877,7 +1993,7 @@
                     '在游戏中打开执行器并粘贴脚本',
                     '执行脚本并享受增强的游戏体验'
                 ],
-                copyScriptText: '查看链接',
+                copyScriptText: '复制',
                 executorText: '获取 Delta（推荐）',
                 
                 getKeyTitle: '获取密钥',
@@ -1887,7 +2003,7 @@
                     '通过官方社区获取密钥支持',
                     '留意下方脚本密钥'
                 ],
-                copyKeyText: '复制密钥',
+                copyKeyText: '复制',
                 
                 channelsTitle: '官方频道',
                 channelsText: '加入我们的官方社区，获取最新脚本更新、教程和即时支持：',
@@ -2119,7 +2235,7 @@
                     'Open the executor in-game and paste the script',
                     'Execute the script and enjoy the enhanced gaming experience'
                 ],
-                copyScriptText: 'View link',
+                copyScriptText: 'Copy',
                 executorText: 'Get Delta (Recommended)',
                 
                 getKeyTitle: 'Get Key',
@@ -2129,7 +2245,7 @@
                     'Get key support through official communities',
                     'Pay attention to the script key below'
                 ],
-                copyKeyText: 'Copy Key',
+                copyKeyText: 'Copy',
                 
                 channelsTitle: 'Official Channels',
                 channelsText: 'Join our official communities for the latest script updates, tutorials and instant support:',
@@ -2625,6 +2741,9 @@ updateContent4: `<strong>Maintenance Notice:</strong>
             
             // 初始化Logo
             loadLogo();
+            
+            // 初始化背景图
+            loadBackground();
             
             // 初始化语言系统
             initLanguage();
